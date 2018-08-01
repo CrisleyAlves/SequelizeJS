@@ -1,89 +1,31 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 
-const seqConfig = require("./sequelize/config");
-const connection = seqConfig.connection;
-const sequelize = seqConfig.sequelize;
-
-//models
-const Product = require("./model/product")(connection, sequelize);
-const Category = require("./model/category")(connection, sequelize);
-const Client = require("./model/Client")(connection, sequelize);
-const Company = require("./model/Company")(connection, sequelize);
-const Payment = require("./model/Payment")(connection, sequelize);
-
-connection.sync({
-    // force: true
-    logging: false
-}).then( result =>{
-
-    // Client.sync().then(()=>{
-    //     Client.create({
-    //         name: "Crisley Alves",
-    //         email: "crisleyalvesphx@gmail.com",
-    //         photo: "photo",
-    //         password: "password"
-    //     });
-    // });
-
-    
-
-    // Category.create({
-    //     name: "Javascript",
-    //     description: "Studying Javascript"
-    // }).then( (result) => {});   
-
-    // Product.create({
-    //         name: "NodeJS + Express + Sequelize + React",
-    //         description: "Development of a project using JS",
-    //         price: 19.90,
-    //         author: "Crisley Alves",
-    //         categoryId: 3
-    //     }).then( (result) => {
-            
-    //     }).catch( error =>{
-    //         console.log(error);
-    //     });
-
-    // Category.findAll({
-        
-        //tipo um JOIN, defini um alias em Category, o "as" tem que ter o mesmo nome, senão quebra
-    //     include: [
-    //         {model: Product, as: "produtos"}
-    //     ],
-    // }).then((result)=>{
-    //     console.log(result[1].dataValues.produtos);
-    // })
-
-}).catch(error => {
-    console.log("Erro ao conectar");
-    console.log(error);
-});
-
-    // category(connection, sequelize).create({
-    //     name: "Javascript",
-    //     "description": "Studying Javascript"
-    // }).then((result)=>{
-    //     console.log("Categoria cadastrada com sucesso");
-    // }).catch((error)=>{
-    //     console.log(error);
-    // });
-
-    // product(connection, sequelize).create({
-    //         name: "NodeJS + Express + Sequelize + React",
-    //         description: "Development of a project using JS",
-    //         price: 19.90,
-    //         author: "Crisley Alves",
-    //         CategoryId: 1
-    //     }).then( (result) => {
-            
-    //     }).catch( error =>{
-    //         console.log(error);
-    // });
+const categorytRoutes = require("./api/routes/Category");
 
 // log da requisição no console
 app.use(morgan("dev"));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+app.use('/categories', categorytRoutes);
+
+app.use((req, res, next)=>{
+    const error = new Error('Not found');
+    error.status = 404;
+    next(error);
+});
+
+app.use((error, req, res, next)=>{ 
+    res.status(error.status || 500);
+    res.json({
+        error: {
+            message: error.message
+        }
+    })
+});
 
 //Configuração do CORS
 app.use((req, res, next)=>{

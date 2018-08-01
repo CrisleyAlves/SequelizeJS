@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 
 exports.sequelize = Sequelize;
+exports.op = Sequelize.Op;
 
 exports.connection = new Sequelize(
     process.env.PROJECT_DATABASE, 
