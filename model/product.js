@@ -34,7 +34,14 @@ module.exports = (connection, sequelize) => {
             }
         },
         categoryId: {
-            type: sequelize.INTEGER
+            type: sequelize.INTEGER,
+            allowNull: false,
+            validate:{
+                isInt: {
+                    args: true,
+                    msg: "O ID da categoria deve ser informado"
+                }
+            }
         }
     }, {} );
         

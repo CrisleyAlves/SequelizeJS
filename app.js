@@ -9,11 +9,26 @@ const sequelize = seqConfig.sequelize;
 //models
 const Product = require("./model/product")(connection, sequelize);
 const Category = require("./model/category")(connection, sequelize);
+const Client = require("./model/Client")(connection, sequelize);
+const Company = require("./model/Company")(connection, sequelize);
+const Payment = require("./model/Payment")(connection, sequelize);
 
 connection.sync({
     // force: true
     logging: false
 }).then( result =>{
+
+    // Client.sync().then(()=>{
+    //     Client.create({
+    //         name: "Crisley Alves",
+    //         email: "crisleyalvesphx@gmail.com",
+    //         photo: "photo",
+    //         password: "password"
+    //     });
+    // });
+
+    
+
     // Category.create({
     //     name: "Javascript",
     //     description: "Studying Javascript"
@@ -31,15 +46,15 @@ connection.sync({
     //         console.log(error);
     //     });
 
-    Category.findAll({
+    // Category.findAll({
         
         //tipo um JOIN, defini um alias em Category, o "as" tem que ter o mesmo nome, senão quebra
-        include: [
-            {model: Product, as: "produtos"}
-        ],
-    }).then((result)=>{
-        console.log(result[1].dataValues.produtos);
-    })
+    //     include: [
+    //         {model: Product, as: "produtos"}
+    //     ],
+    // }).then((result)=>{
+    //     console.log(result[1].dataValues.produtos);
+    // })
 
 }).catch(error => {
     console.log("Erro ao conectar");
