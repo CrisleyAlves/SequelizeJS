@@ -1,5 +1,5 @@
 'use strict';
-const Product = require("./Product");
+const OrderItem = require("./OrderItem");
 
 module.exports = (connection, sequelize) => {
     var Order = connection.define("Order", {
@@ -51,6 +51,13 @@ module.exports = (connection, sequelize) => {
             }
         }
     }, {} );
+
+    //Deu trabalho
+    Order.hasMany( OrderItem(connection, sequelize), {
+        as: "itens",
+        foreignKey: 'orderId',
+        allowNull: false
+    });
     
     return Order;
 }
