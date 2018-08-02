@@ -3,18 +3,20 @@ const connection = seqConfig.connection;
 const sequelize = seqConfig.sequelize;
 const Op = sequelize.Op;
 
-const Category = require("../../model/Category")(connection, sequelize);
+const Company = require("../../model/Company")(connection, sequelize);
 
 exports.getAll = (req, res, next)=>{
     connection.sync().then(()=>{
-        Category.findAll().then( (result) =>{
+        Company.findAll().then( (result) =>{
             res.status(200).json({
                 message: "Requisição realizada com sucesso",
-                categories: result.map( (category) => {
+                companies: result.map( (company) => {
                     return{
-                        id: category.id,
-                        name: category.name,
-                        description: category.description
+                        id: company.id,
+                        name: company.name,
+                        razaoSocial: company.razaoSocial,
+                        fantasyName: company.fantasyName,
+                        logo: company.logo
                     }
                 })
             });
@@ -36,18 +38,20 @@ exports.getAll = (req, res, next)=>{
 
 exports.getById = (req, res, next)=>{
     connection.sync().then(()=>{
-        Category.findById(req.params.categoryId).then( (result) =>{
+        Company.findById(req.params.companyId).then( (result) =>{
             res.status(200).json({
                 message: "Requisição realizada com sucesso",
-                category: {
+                company: {
                         id: result.id,
                         name: result.name,
-                        description: result.description
+                        razaoSocial: result.razaoSocial,
+                        fantasyName: result.fantasyName,
+                        logo: result.logo
                     }
                 })
             }).catch((error)=>{
                 res.status(500).json({
-                    message: "Categoria não encontrada",
+                    message: "Empresa não encontrada",
                     error: error
                 })
             });
@@ -62,14 +66,17 @@ exports.getById = (req, res, next)=>{
 
 exports.insert = (req, res, next)=>{
     connection.sync().then(()=>{
-        Category.create({
+
+        Company.create({
             name: req.body.name,
-            description: req.body.description
+            razaoSocial: req.body.razaoSocial,
+            fantasyName: req.body.fantasyName,
+            logo: req.file.path
         })
         .then( (result) =>{
             res.status(201).json({
-                message: "Categoria cadastrada com sucesso",
-                category: {
+                message: "Empresa cadastrada com sucesso",
+                company: {
                         id: result.id,
                         name: result.name,
                         description: result.description
@@ -78,7 +85,7 @@ exports.insert = (req, res, next)=>{
             })
             .catch( (error) =>{
                 res.status(500).json({
-                    message: "Ocorreu um erro ao cadastrar a categoria",
+                    message: "Ocorreu um erro ao cadastrar a empresa",
                     error: error
                 });
             });
@@ -93,20 +100,22 @@ exports.insert = (req, res, next)=>{
 
 exports.update = (req, res, next)=>{
     connection.sync().then(()=>{
-        Category.update({
+        Company.update({
             name: req.body.name,
-            description: req.body.description
+            razaoSocial: req.body.razaoSocial,
+            fantasyName: req.body.fantasyName,
+            logo: req.file.path
         }, {
             where: {
                 id: req.body.id
             }
         }).then( (result) =>{
             res.status(200).json({
-                message: "Categoria atualizada com sucesso"
+                message: "Empresa atualizada com sucesso"
             })
         }).catch( (error) =>{
             res.status(500).json({
-                message: "Ocorreu um erro ao atualizar a categoria",
+                message: "Ocorreu um erro ao atualizar a empresa",
                 error: error
             });
         });
@@ -121,19 +130,19 @@ exports.update = (req, res, next)=>{
 
 exports.delete = (req, res, next)=>{
     connection.sync().then(()=>{
-        Category.destroy({
+        Company.destroy({
             where: {
-                id: req.params.categoryId
+                id: req.params.companyId
             }
         }).then( (result) =>{
             console.log(result);
             if(result === 1){
                 res.status(200).json({
-                    message: "Categoria removida com sucesso"
+                    message: "Empresa removida com sucesso"
                 })
             }else{
                 res.status(404).json({
-                    message: "A categoria informada não existe"
+                    message: "A empresa informada não existe"
                 });
             }
         });

@@ -4,13 +4,16 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
 const categorytRoutes = require("./api/routes/Category");
+const companyRoutes = require("./api/routes/Company");
 
 // log da requisição no console
 app.use(morgan("dev"));
+app.use('/uploads', express.static("uploads")) // quando a rota for X, permita acesso a pasta de uploads
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use('/categories', categorytRoutes);
+app.use('/companies', companyRoutes);
 
 app.use((req, res, next)=>{
     const error = new Error('Not found');
@@ -19,7 +22,7 @@ app.use((req, res, next)=>{
 });
 
 app.use((error, req, res, next)=>{ 
-    res.status(error.status || 500);
+    res.status(error.status || 400);
     res.json({
         error: {
             message: error.message
