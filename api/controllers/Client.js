@@ -2,21 +2,21 @@ const seqConfig = require("../../sequelize/config");
 const connection = seqConfig.connection;
 const sequelize = seqConfig.sequelize;
 const Op = sequelize.Op;
+const Bcrypt = require("bcrypt");
 
-const Company = require("../../model/Company")(connection, sequelize);
+const Client = require("../../model/Client")(connection, sequelize);
 
 exports.getAll = (req, res, next)=>{
     connection.sync().then(()=>{
-        Company.findAll().then( (result) =>{
+        Client.findAll().then( (result) =>{
             res.status(200).json({
                 message: "Requisição realizada com sucesso",
-                companies: result.map( (company) => {
+                clients: result.map( (client) => {
                     return{
-                        id: company.id,
-                        name: company.name,
-                        razaoSocial: company.razaoSocial,
-                        fantasyName: company.fantasyName,
-                        logo: company.logo
+                        id: client.id,
+                        name: client.name,
+                        email: client.email,
+                        photo: client.photo
                     }
                 })
             });
@@ -38,20 +38,19 @@ exports.getAll = (req, res, next)=>{
 
 exports.getById = (req, res, next)=>{
     connection.sync().then(()=>{
-        Company.findById(req.params.companyId).then( (result) =>{
+        Client.findById(req.params.clientId).then( (result) =>{
             res.status(200).json({
                 message: "Requisição realizada com sucesso",
-                company: {
+                client: {
                         id: result.id,
                         name: result.name,
-                        razaoSocial: result.razaoSocial,
-                        fantasyName: result.fantasyName,
-                        logo: result.logo
+                        email: result.email,
+                        photo: result.photo
                     }
                 })
             }).catch((error)=>{
                 res.status(500).json({
-                    message: "Empresa não encontrada",
+                    message: "Cliente não encontrado",
                     error: error
                 })
             });
@@ -65,56 +64,64 @@ exports.getById = (req, res, next)=>{
 };
 
 exports.insert = (req, res, next)=>{
-    connection.sync().then(()=>{
-        Company.create({
-            name: req.body.name,
-            razaoSocial: req.body.razaoSocial,
-            fantasyName: req.body.fantasyName,
-            logo: req.file.path
-        })
-        .then( (result) =>{
-            res.status(201).json({
-                message: "Empresa cadastrada com sucesso",
-                company: {
-                        id: result.id,
-                        name: result.name,
-                        description: result.description
-                    }
-                });
-            })
-            .catch( (error) =>{
+    Bcrypt.hash(req.body.password, 10, (err, hash) =>{
+        if(err){
+            res.status(500).json({
+                message: 'Ocorreu um erro ao criptografar a senha',
+                error: err
+            });
+        }else{
+            connection.sync().then(()=>{
+                Client.create({
+                    name: req.body.name,
+                    email: req.body.email,
+                    photo: req.file.path,
+                    password: hash,
+                })
+                .then( (result) =>{
+                    res.status(201).json({
+                        message: "Cliente cadastrado com sucesso",
+                        category: {
+                                id: result.id,
+                                name: result.name,
+                                email: result.email
+                            }
+                        });
+                    })
+                    .catch( (error) =>{
+                        res.status(500).json({
+                            message: "Ocorreu um erro ao cadastrar o cliente",
+                            error: error
+                        });
+                    });
+                })
+            .catch((error)=>{
                 res.status(500).json({
-                    message: "Ocorreu um erro ao cadastrar a empresa",
+                    message: "Ocorreu um erro ao conectar com o banco",
                     error: error
                 });
-            });
-        })
-    .catch((error)=>{
-        res.status(500).json({
-            message: "Ocorreu um erro ao conectar com o banco",
-            error: error
-        });
-    });    
+            });    
+        }
+    });
 };
 
 exports.update = (req, res, next)=>{
     connection.sync().then(()=>{
-        Company.update({
+        Client.update({
             name: req.body.name,
-            razaoSocial: req.body.razaoSocial,
-            fantasyName: req.body.fantasyName,
-            logo: req.file.path
+            email: req.body.email,
+            photo: req.file.path
         }, {
             where: {
                 id: req.body.id
             }
         }).then( (result) =>{
             res.status(200).json({
-                message: "Empresa atualizada com sucesso"
+                message: "Cliente atualizado com sucesso"
             })
         }).catch( (error) =>{
             res.status(500).json({
-                message: "Ocorreu um erro ao atualizar a empresa",
+                message: "Ocorreu um erro ao atualizar o cliente",
                 error: error
             });
         });
@@ -129,19 +136,19 @@ exports.update = (req, res, next)=>{
 
 exports.delete = (req, res, next)=>{
     connection.sync().then(()=>{
-        Company.destroy({
+        Client.destroy({
             where: {
-                id: req.params.companyId
+                id: req.params.clientId
             }
         }).then( (result) =>{
             console.log(result);
             if(result === 1){
                 res.status(200).json({
-                    message: "Empresa removida com sucesso"
+                    message: "Cliente removido com sucesso"
                 })
             }else{
                 res.status(404).json({
-                    message: "A empresa informada não existe"
+                    message: "O cliente informado não existe"
                 });
             }
         });

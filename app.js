@@ -5,15 +5,18 @@ const bodyParser = require("body-parser");
 
 const categorytRoutes = require("./api/routes/Category");
 const companyRoutes = require("./api/routes/Company");
+const clientRoutes = require("./api/routes/Client");
 
 // log da requisição no console
 app.use(morgan("dev"));
 app.use('/uploads', express.static("uploads")) // quando a rota for X, permita acesso a pasta de uploads
+app.use('/uploads/clients', express.static("uploads")) // quando a rota for X, permita acesso a pasta de uploads
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use('/categories', categorytRoutes);
 app.use('/companies', companyRoutes);
+app.use('/clients', clientRoutes);
 
 app.use((req, res, next)=>{
     const error = new Error('Not found');
