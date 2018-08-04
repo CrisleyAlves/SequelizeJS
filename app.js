@@ -7,6 +7,7 @@ const categorytRoutes = require("./api/routes/Category");
 const companyRoutes = require("./api/routes/Company");
 const clientRoutes = require("./api/routes/Client");
 const productRoutes = require("./api/routes/Product");
+const orderRoutes = require("./api/routes/Order");
 
 // log da requisição no console
 app.use(morgan("dev"));
@@ -19,6 +20,7 @@ app.use('/categories', categorytRoutes);
 app.use('/companies', companyRoutes);
 app.use('/clients', clientRoutes);
 app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
 
 app.use((req, res, next)=>{
     const error = new Error('Not found');
