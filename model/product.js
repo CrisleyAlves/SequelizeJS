@@ -1,5 +1,8 @@
 'use strict';
 
+const Company = require("./Company");
+const Category = require("./Category");
+
 module.exports = (connection, sequelize) => {
     var Product = connection.define("Products", {    
         name: {
@@ -32,18 +35,23 @@ module.exports = (connection, sequelize) => {
                     }
                 }
             }
-        },
-        categoryId: {
-            type: sequelize.INTEGER,
-            allowNull: false,
-            validate:{
-                isInt: {
-                    args: true,
-                    msg: "O ID da categoria deve ser informado"
-                }
-            }
         }
     }, {} );
+
+    const companyModel = Company(connection, sequelize);
+    const categoryModel = Company(connection, sequelize);
+
+    //Deu trabalho
+    Product.belongsTo( companyModel, {
+        as: "company",
+        allowNull: false
+    });
+
+    //Deu trabalho
+    Product.belongsTo( categoryModel, {
+        as: "category",
+        allowNull: false
+    });
         
     return Product;
 }

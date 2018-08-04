@@ -25,13 +25,6 @@ module.exports = (connection, sequelize) => {
             allowNull: false
         }
     }, {} );
-
-    //Deu trabalho
-    Company.hasMany( Product(connection, sequelize), {
-        as: "produtos",
-        foreignKey: 'companyId',
-        allowNull: false
-    });
     
     return Company;
 }

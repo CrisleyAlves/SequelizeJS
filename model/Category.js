@@ -21,9 +21,11 @@ module.exports = (connection, sequelize) => {
         }
     }, {} );
 
+    const productModel = Product(connection, sequelize);
+
     //Deu trabalho
-    Category.hasMany( Product(connection, sequelize), {
-        as: "produtos",
+    Category.hasMany( productModel, {
+        as: "productsByCategory",
         foreignKey: 'categoryId',
         allowNull: false
     });
