@@ -1,8 +1,9 @@
 'use strict';
-const Order = require("./Order");
 
-module.exports = (connection, sequelize) => {
-    var Client = connection.define("Client", {
+const sequelize = require("../sequelize/config").sequelize;
+const connection = require("../sequelize/config").connection;
+
+const Client = connection.define("Client", {
         name: {
             type: sequelize.STRING,
             allowNull: false,
@@ -31,12 +32,4 @@ module.exports = (connection, sequelize) => {
         }
     }, {} );
 
-    //Deu trabalho
-    Client.hasMany( Order(connection, sequelize), {
-        as: "orders",
-        foreignKey: 'clientId',
-        allowNull: false
-    });
-    
-    return Client;
-}
+module.exports = Client;

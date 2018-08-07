@@ -1,9 +1,9 @@
 'use strict';
 const Product = require("./Product");
+const sequelize = require("../sequelize/config").sequelize;
+const connection = require("../sequelize/config").connection;
 
-module.exports = (connection, sequelize) => {
-
-    var Company = connection.define("Company", {
+const Company = connection.define("Company", {
         name: {
             type: sequelize.STRING,
             allowNull: false,
@@ -24,7 +24,14 @@ module.exports = (connection, sequelize) => {
             type: sequelize.STRING,
             allowNull: false
         }
-    }, {} );
+    }, {} 
+);
+
+//Deu trabalho
+Company.hasMany( Product, {
+    as: "products",
+    foreignKey: 'companyId',
+    allowNull: false
+});
     
-    return Company;
-}
+module.exports = Company;

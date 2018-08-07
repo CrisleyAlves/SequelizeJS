@@ -3,8 +3,8 @@ const connection = seqConfig.connection;
 const sequelize = seqConfig.sequelize;
 const Op = sequelize.Op;
 
-const Order = require("../../model/Order")(connection, sequelize);
-const OrderItem = require("../../model/OrderItem")(connection, sequelize);
+const Order = require("../../model/Order");
+const OrderItem = require("../../model/OrderItem");
 
 exports.getAll = (req, res, next)=>{
     connection.sync().then(()=>{

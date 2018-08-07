@@ -4,7 +4,7 @@ const sequelize = seqConfig.sequelize;
 const Op = sequelize.Op;
 const Bcrypt = require("bcrypt");
 
-const Client = require("../../model/Client")(connection, sequelize);
+const Client = require("../../model/Client");
 
 exports.getAll = (req, res, next)=>{
     connection.sync().then(()=>{

@@ -3,7 +3,7 @@ const connection = seqConfig.connection;
 const sequelize = seqConfig.sequelize;
 const Op = sequelize.Op;
 
-const Company = require("../../model/Company")(connection, sequelize);
+const Company = require("../../model/Company");
 
 exports.getAll = (req, res, next)=>{
     connection.sync().then(()=>{

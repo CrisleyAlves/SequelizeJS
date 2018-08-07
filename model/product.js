@@ -1,10 +1,9 @@
 'use strict';
 
-const Company = require("./Company");
-const Category = require("./Category");
+const sequelize = require("../sequelize/config").sequelize;
+const connection = require("../sequelize/config").connection;
 
-module.exports = (connection, sequelize) => {
-    var Product = connection.define("Products", {    
+const Product = connection.define("Products", {    
         name: {
             type: sequelize.STRING,
             allowNull: false,
@@ -37,21 +36,5 @@ module.exports = (connection, sequelize) => {
             }
         }
     }, {} );
-
-    const companyModel = Company(connection, sequelize);
-    const categoryModel = Company(connection, sequelize);
-
-    //Deu trabalho
-    Product.belongsTo( companyModel, {
-        as: "company",
-        allowNull: false
-    });
-
-    //Deu trabalho
-    Product.belongsTo( categoryModel, {
-        as: "category",
-        allowNull: false
-    });
         
-    return Product;
-}
+module.exports = Product;
