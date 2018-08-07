@@ -1,9 +1,8 @@
 'use strict';
-const Order = require("./Order");
+const sequelize = require("../sequelize/config").sequelize;
+const connection = require("../sequelize/config").connection;
 
-module.exports = (connection, sequelize) => {
-
-    var Payment = connection.define("Payment", {
+const Payment = connection.define("Payment", {
         paymentToken: {
             type: sequelize.STRING,
             allowNull: false,
@@ -16,8 +15,4 @@ module.exports = (connection, sequelize) => {
         }
     }, {} );
 
-    //Deu trabalho
-    Payment.belongsTo(Order(connection, sequelize));
-    
-    return Payment;
-}
+module.exports = Payment;

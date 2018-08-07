@@ -5,6 +5,7 @@ const connection = require("../sequelize/config").connection;
 const OrderItem = require("./OrderItem");
 const clientModel = require("./Client");
 const companyModel = require("./Company");
+const Payment = require("./Payment");
 
 const Order = connection.define("Order", {
         formaPagamento: {
@@ -37,7 +38,8 @@ const Order = connection.define("Order", {
     });
 
     Order.belongsTo( clientModel, { as: "client" });
-    Order.belongsTo( companyModel, { as: "company" });
+    Order.belongsTo( companyModel, { as: "company" });    
+    Order.hasOne(Payment);
     Order.hasMany(OrderItem, { as: 'itens'});
 
     module.exports = Order;
