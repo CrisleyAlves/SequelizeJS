@@ -5,6 +5,9 @@ const Op = sequelize.Op;
 
 const Order = require("../../model/Order");
 const OrderItem = require("../../model/OrderItem");
+const Payment = require("../../model/Payment");
+const Client = require("../../model/Client");
+const Company = require("../../model/Company");
 
 exports.getAll = (req, res, next)=>{
     connection.sync().then(()=>{
@@ -44,15 +47,41 @@ exports.getAll = (req, res, next)=>{
 
 exports.getById = (req, res, next)=>{
     connection.sync().then(()=>{
-        Order.findById(req.params.orderId).then( (result) =>{
+        Order.findOne(
+            {
+                where: {
+                  id: req.params.orderId
+                },
+                include: [
+                        { model: OrderItem, as: 'itens'}, //referencia ao alias do model Order.js
+                        { model: Client, as: 'client'},
+                        { model: Company, as: 'company'}
+                ]
+            }
+        ).then( (result) =>{
+            console.log(result)
             res.status(200).json({
                 message: "Requisição realizada com sucesso",
                 order: {
                         id: result.id,
                         statusPedido: result.statusPedido,
-                        clientId: result.clientId,
-                        companyId: result.companyId,
-                        avaliado: result.avaliado
+                        client: {
+                            "id": result.client.id,
+                            "name": result.client.name,
+                            "email": result.client.email,
+                            "photo": result.client.photo
+                        },
+                        company: {
+                            "razaoSocial": result.company.razaoSocial,
+                            "logo": result.company.logo
+                        },
+                        avaliado: result.avaliado,
+                        itens: result.itens.map((item)=>{
+                            return{
+                                id: item.id,
+                                observation: item.observation
+                            }
+                        })
                     }
                 })
             }).catch((error)=>{
@@ -79,7 +108,20 @@ exports.insert = (req, res, next)=>{
             statusPedido: req.body.statusPedido,
             avaliado: req.body.avaliado,
             clientId: req.body.clientId,
-            companyId: req.body.companyId
+            companyId: req.body.companyId,
+            itens: req.body.itens,
+            payment: req.body.payment
+        }, {
+            include: [
+                {
+                    model: OrderItem,
+                    as: 'itens' //referencia ao alias do model Order.js
+                },
+                {
+                    model: Payment,
+                    as: "payment" //referencia ao alias do model Order.js
+                }
+            ]
         })
         .then( (result) =>{
             res.status(201).json({
@@ -93,6 +135,7 @@ exports.insert = (req, res, next)=>{
                 });
             })
             .catch( (error) =>{
+                console.log(error);
                 res.status(500).json({
                     message: "Ocorreu um erro ao realizar o pedido",
                     error: error
@@ -100,6 +143,7 @@ exports.insert = (req, res, next)=>{
             });
         })
     .catch((error)=>{
+        console.log(error);
         res.status(500).json({
             message: "Ocorreu um erro ao conectar com o banco",
             error: error

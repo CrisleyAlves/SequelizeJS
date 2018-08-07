@@ -2,6 +2,7 @@
 
 const sequelize = require("../sequelize/config").sequelize;
 const connection = require("../sequelize/config").connection;
+const Product = require("../model/Product");
 
 const OrderItem = connection.define("OrderItem", {
         observation: {
@@ -9,5 +10,7 @@ const OrderItem = connection.define("OrderItem", {
         }
     }, {} 
 );
+
+OrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'product'});
 
 module.exports = OrderItem;

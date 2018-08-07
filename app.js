@@ -9,6 +9,10 @@ const clientRoutes = require("./api/routes/Client");
 const productRoutes = require("./api/routes/Product");
 const orderRoutes = require("./api/routes/Order");
 
+const sequelize = require("./sequelize/config").sequelize;
+const connection = require("./sequelize/config").connection;
+connection.sync().then().catch();
+
 // log da requisição no console
 app.use(morgan("dev"));
 app.use('/uploads', express.static("uploads")) // quando a rota for X, permita acesso a pasta de uploads

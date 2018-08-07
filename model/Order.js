@@ -39,8 +39,8 @@ const Order = connection.define("Order", {
 
     Order.belongsTo( clientModel, { as: "client" });
     Order.belongsTo( companyModel, { as: "company" });    
-    Order.hasOne(Payment);
-    Order.hasMany(OrderItem, { as: 'itens'});
+    Order.hasMany(Payment, {as: "payment"});
+    Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'itens'});
 
     module.exports = Order;
 
